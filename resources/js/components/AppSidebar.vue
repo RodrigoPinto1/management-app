@@ -14,29 +14,92 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
+import {
+    Archive,
+    BookOpen,
+    Box,
+    Briefcase,
+    Calendar,
+    CreditCard,
+    FileText,
+    Flag,
+    Folder,
+    LayoutGrid,
+    Percent,
+    Settings,
+    Shield,
+    ShoppingCart,
+    Truck,
+    User,
+    Users,
+} from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
-const mainNavItems: NavItem[] = [
+const dashboardHref = dashboard().url;
+
+const managementItems: NavItem[] = [
+    { title: 'Clientes', href: '/clients', icon: Users },
+    { title: 'Fornecedores', href: '/suppliers', icon: Truck },
+    { title: 'Entidades - Países', href: '/countries', icon: Flag },
+];
+
+const contactsItems: NavItem[] = [
+    { title: 'Contactos', href: '/contacts', icon: User },
+    { title: 'Contactos - Funções', href: '/contact-roles', icon: User },
+];
+
+const salesItems: NavItem[] = [
+    { title: 'Propostas', href: '/proposals', icon: FileText },
     {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
+        title: 'Encomendas - Clientes',
+        href: '/orders/customers',
+        icon: ShoppingCart,
+    },
+    {
+        title: 'Encomendas - Fornecedores',
+        href: '/orders/suppliers',
+        icon: Truck,
     },
 ];
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
+const operationalItems: NavItem[] = [
+    { title: 'Ordens de Trabalho', href: '/work-orders', icon: Briefcase },
+    { title: 'Artigos', href: '/items', icon: Box },
 ];
+
+const calendarItems: NavItem[] = [
+    { title: 'Calendário', href: '/calendar', icon: Calendar },
+    { title: 'Calendário - Tipos', href: '/calendar/types', icon: Calendar },
+    { title: 'Calendário - Acções', href: '/calendar/actions', icon: Calendar },
+];
+
+const financeItems: NavItem[] = [
+    { title: 'Contas Bancárias', href: '/bank-accounts', icon: CreditCard },
+    {
+        title: 'Conta Corrente Clientes',
+        href: '/customers/account',
+        icon: CreditCard,
+    },
+    {
+        title: 'Faturas Fornecedores',
+        href: '/supplier-invoices',
+        icon: FileText,
+    },
+    { title: 'Financeiro - IVA', href: '/tax/vat', icon: Percent },
+];
+
+const accessItems: NavItem[] = [
+    { title: 'Gestão de Acessos', href: '/access', icon: Shield },
+    { title: 'Utilizadores', href: '/users', icon: Users },
+    { title: 'Permissões', href: '/permissions', icon: Shield },
+];
+
+const miscItems: NavItem[] = [
+    { title: 'Arquivo Digital', href: '/digital-archive', icon: Archive },
+    { title: 'Logs', href: '/logs', icon: FileText },
+    { title: 'Empresa', href: '/company', icon: Settings },
+];
+
 </script>
 
 <template>
@@ -54,11 +117,28 @@ const footerNavItems: NavItem[] = [
         </SidebarHeader>
 
         <SidebarContent>
-            <NavMain :items="mainNavItems" />
+            <NavMain
+                :items="[
+                    {
+                        title: 'Dashboard',
+                        href: dashboardHref,
+                        icon: LayoutGrid,
+                    },
+                ]"
+                label="Início"
+            />
+
+            <NavMain :items="managementItems" label="Gestão" />
+            <NavMain :items="contactsItems" label="Contactos" />
+            <NavMain :items="salesItems" label="Vendas & Compras" />
+            <NavMain :items="operationalItems" label="Operacional" />
+            <NavMain :items="calendarItems" label="Calendário" />
+            <NavMain :items="financeItems" label="Financeiro" />
+            <NavMain :items="accessItems" label="Gestão de Acessos" />
+            <NavMain :items="miscItems" label="Configurações" />
         </SidebarContent>
 
         <SidebarFooter>
-            <NavFooter :items="footerNavItems" />
             <NavUser />
         </SidebarFooter>
     </Sidebar>
