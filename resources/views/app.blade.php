@@ -4,31 +4,63 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        {{-- Inline script to detect system dark mode preference and apply it immediately --}}
+        {{-- Early inline appearance script: read localStorage, cookie, or server value and apply theme immediately. --}}
         <script>
             (function() {
-                const appearance = '{{ $appearance ?? "system" }}';
+                const serverAppearance = '{{ $appearance ?? "system" }}';
+
+                function readLocalStorage() {
+                    try {
+                        return localStorage.getItem('appearance');
+                    } catch (e) {
+                        return null;
+                    }
+                }
+
+                function readCookie() {
+                    try {
+                        const m = document.cookie.match('(?:^|; )appearance=([^;]+)');
+                        return m ? decodeURIComponent(m[1]) : null;
+                    } catch (e) {
+                        return null;
+                    }
+                }
+
+                let appearance = readLocalStorage() || readCookie() || serverAppearance || 'system';
 
                 if (appearance === 'system') {
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-                    if (prefersDark) {
-                        document.documentElement.classList.add('dark');
+                    try {
+                        appearance = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                    } catch (e) {
+                        appearance = 'light';
                     }
+                }
+
+                if (appearance === 'dark') {
+                    document.documentElement.classList.add('dark');
+                    // core theme variables
+                    document.documentElement.style.setProperty('--background', '#0a0a0a');
+                    document.documentElement.style.setProperty('--foreground', '#fafafa');
+                    document.documentElement.style.setProperty('--sidebar-background', '#121212');
+                    // Tailwind / utility fallbacks (so `bg-white` and similar follow theme immediately)
+                    document.documentElement.style.setProperty('--color-white', '#0a0a0a');
+                    document.documentElement.style.setProperty('--color-card', '#0a0a0a');
+                    document.documentElement.style.setProperty('--color-popover', '#0a0a0a');
+                    document.documentElement.style.setProperty('--color-card-foreground', '#fafafa');
+                    document.documentElement.style.setProperty('--color-popover-foreground', '#fafafa');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.style.setProperty('--background', '#ffffff');
+                    document.documentElement.style.setProperty('--foreground', '#0a0a0a');
+                    document.documentElement.style.setProperty('--sidebar-background', '#fafafa');
+                    document.documentElement.style.setProperty('--color-white', '#ffffff');
+                    document.documentElement.style.setProperty('--color-card', '#ffffff');
+                    document.documentElement.style.setProperty('--color-popover', '#ffffff');
+                    document.documentElement.style.setProperty('--color-card-foreground', '#0a0a0a');
+                    document.documentElement.style.setProperty('--color-popover-foreground', '#0a0a0a');
                 }
             })();
         </script>
-
-        {{-- Inline style to set the HTML background color based on our theme in app.css --}}
-        <style>
-            html {
-                background-color: oklch(1 0 0);
-            }
-
-            html.dark {
-                background-color: oklch(0.145 0 0);
-            }
-        </style>
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 

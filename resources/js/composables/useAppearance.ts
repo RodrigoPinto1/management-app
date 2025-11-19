@@ -6,6 +6,31 @@ export function updateTheme(value: Appearance) {
     if (typeof window === 'undefined') {
         return;
     }
+    function applyFallbackVars(theme: 'dark' | 'light') {
+        try {
+            if (theme === 'dark') {
+                document.documentElement.style.setProperty('--background', '#0a0a0a');
+                document.documentElement.style.setProperty('--foreground', '#fafafa');
+                document.documentElement.style.setProperty('--sidebar-background', '#121212');
+                document.documentElement.style.setProperty('--color-white', '#0a0a0a');
+                document.documentElement.style.setProperty('--color-card', '#0a0a0a');
+                document.documentElement.style.setProperty('--color-popover', '#0a0a0a');
+                document.documentElement.style.setProperty('--color-card-foreground', '#fafafa');
+                document.documentElement.style.setProperty('--color-popover-foreground', '#fafafa');
+            } else {
+                document.documentElement.style.setProperty('--background', '#ffffff');
+                document.documentElement.style.setProperty('--foreground', '#0a0a0a');
+                document.documentElement.style.setProperty('--sidebar-background', '#fafafa');
+                document.documentElement.style.setProperty('--color-white', '#ffffff');
+                document.documentElement.style.setProperty('--color-card', '#ffffff');
+                document.documentElement.style.setProperty('--color-popover', '#ffffff');
+                document.documentElement.style.setProperty('--color-card-foreground', '#0a0a0a');
+                document.documentElement.style.setProperty('--color-popover-foreground', '#0a0a0a');
+            }
+        } catch (e) {
+            // ignore in non-browser environments
+        }
+    }
 
     if (value === 'system') {
         const mediaQueryList = window.matchMedia(
@@ -17,8 +42,10 @@ export function updateTheme(value: Appearance) {
             'dark',
             systemTheme === 'dark',
         );
+        applyFallbackVars(systemTheme === 'dark' ? 'dark' : 'light');
     } else {
         document.documentElement.classList.toggle('dark', value === 'dark');
+        applyFallbackVars(value === 'dark' ? 'dark' : 'light');
     }
 }
 
