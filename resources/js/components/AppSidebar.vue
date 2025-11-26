@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import {
@@ -23,7 +22,6 @@ import {
     CreditCard,
     FileText,
     Flag,
-    Folder,
     LayoutGrid,
     Percent,
     Settings,
@@ -97,9 +95,9 @@ const accessItems: NavItem[] = [
 const miscItems: NavItem[] = [
     { title: 'Arquivo Digital', href: '/digital-archive', icon: Archive },
     { title: 'Logs', href: '/logs', icon: FileText },
+    { title: 'Artigos', href: '/settings/articles', icon: BookOpen },
     { title: 'Empresa', href: '/company', icon: Settings },
 ];
-
 </script>
 
 <template>
