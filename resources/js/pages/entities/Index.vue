@@ -45,15 +45,6 @@ const form = useForm({
 const showCreate = ref(false);
 const isSubmitting = ref(false);
 
-function getXsrfTokenFromCookie() {
-    try {
-        const m = document.cookie.match('(?:^|; )XSRF-TOKEN=([^;]+)');
-        return m ? decodeURIComponent(m[1]) : null;
-    } catch (e) {
-        return null;
-    }
-}
-
 async function load() {
     loading.value = true;
     try {
@@ -77,37 +68,8 @@ async function load() {
     }
 }
 
-async function checkNif(nif: string) {
-    try {
-        const res = await fetch(
-            `/entities/check-nif?nif=${encodeURIComponent(nif)}`,
-            {
-                credentials: 'same-origin',
-                headers: { Accept: 'application/json' },
-            },
-        );
-        if (!res.ok) return false;
-        const json = await res.json();
-        return json.exists === true;
-    } catch (e) {
-        console.error(e);
-        return false;
-    }
-}
-
 async function submit() {
     isSubmitting.value = true;
-
-    // Basic client-side NIF existence check
-    if (form.nif) {
-        const exists = await checkNif(form.nif);
-        if (exists) {
-            (form as any).setError('nif', 'NIF já existe.');
-            isSubmitting.value = false;
-            return;
-        }
-    }
-
     // Use Inertia form submission which handles CSRF and validation nicely
     form.post('/entities', {
         onSuccess: async () => {
@@ -123,7 +85,6 @@ async function submit() {
         },
     });
 }
-
 onMounted(load);
 </script>
 
@@ -270,28 +231,6 @@ onMounted(load);
                                 class="mt-1 text-sm text-destructive"
                             >
                                 {{ form.errors.city }}
-                            </p>
-                        </div>
-
-                        <div class="col-span-2">
-                            <Label for="address">Morada</Label>
-                            <Input id="address" v-model="form.address" />
-                            <p
-                                v-if="form.errors?.address"
-                                class="mt-1 text-sm text-destructive"
-                            >
-                                {{ form.errors.address }}
-                            </p>
-                        </div>
-
-                        <div class="col-span-2">
-                            <Label for="notes">Observações</Label>
-                            <Input id="notes" v-model="form.notes" />
-                            <p
-                                v-if="form.errors?.notes"
-                                class="mt-1 text-sm text-destructive"
-                            >
-                                {{ form.errors.notes }}
                             </p>
                         </div>
 

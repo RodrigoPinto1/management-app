@@ -37,6 +37,16 @@ class ArticleController extends Controller
 
         $article = Article::create($data);
 
+        // Log the activity
+        activity('configurações')
+            ->causedBy(auth()->user())
+            ->performedOn($article)
+            ->withProperties([
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ])
+            ->log('Criou artigo: ' . $article->name);
+
         return response()->json($article);
     }
 }

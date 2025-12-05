@@ -28,7 +28,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // JSON endpoints used by the frontend
     Route::get('entities/list', [EntityController::class, 'list']);
+    // Users list for calendar filter
+    Route::get('users/list', function () {
+        return response()->json(['data' => \App\Models\User::orderBy('name')->get()]);
+    });
     Route::get('entities/check-nif', [EntityController::class, 'checkNif']);
+    Route::get('entities/vies', [EntityController::class, 'vies']);
     Route::post('entities', [EntityController::class, 'store']);
 
     // Settings - Articles
@@ -42,4 +47,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('proposals/{proposal}', [\App\Http\Controllers\ProposalController::class, 'show']);
     Route::post('proposals', [\App\Http\Controllers\ProposalController::class, 'store']);
     Route::post('proposals/{proposal}/convert', [\App\Http\Controllers\ProposalController::class, 'convert']);
+
+    // Calendar
+    Route::get('calendar', [\App\Http\Controllers\CalendarController::class, 'index'])->name('calendar');
+    Route::get('calendar/events', [\App\Http\Controllers\CalendarController::class, 'events']);
+    Route::post('calendar/events', [\App\Http\Controllers\CalendarController::class, 'store']);
+    Route::put('calendar/events/{calendarEvent}', [\App\Http\Controllers\CalendarController::class, 'update']);
+    Route::delete('calendar/events/{calendarEvent}', [\App\Http\Controllers\CalendarController::class, 'destroy']);
+    Route::get('calendar/types', [\App\Http\Controllers\CalendarController::class, 'types']);
+    Route::get('calendar/actions', [\App\Http\Controllers\CalendarController::class, 'actions']);
+    // Company page used by sidebar
+    Route::get('company', [\App\Http\Controllers\Settings\CompanyController::class, 'edit'])->name('company.edit');
+    Route::post('company', [\App\Http\Controllers\Settings\CompanyController::class, 'update'])->name('company.update');
+
+    // Activity Logs
+    Route::get('logs', [\App\Http\Controllers\ActivityLogController::class, 'index'])->name('logs.index');
+    Route::get('logs/list', [\App\Http\Controllers\ActivityLogController::class, 'list']);
+    Route::post('logs/generate-test', [\App\Http\Controllers\ActivityLogController::class, 'generateTest'])->name('logs.generate-test');
 });

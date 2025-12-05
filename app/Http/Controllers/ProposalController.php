@@ -82,6 +82,16 @@ class ProposalController extends Controller
             }
             $proposal->save();
 
+            // Log the activity
+            activity('vendas')
+                ->causedBy(auth()->user())
+                ->performedOn($proposal)
+                ->withProperties([
+                    'ip' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                ])
+                ->log('Criou proposta Nº ' . $proposal->number);
+
             return response()->json($proposal->load('lines'));
         });
     }
@@ -92,6 +102,16 @@ class ProposalController extends Controller
         $proposal->status = 'closed';
         $proposal->closed_at = now();
         $proposal->save();
+
+        // Log the activity
+        activity('vendas')
+            ->causedBy(auth()->user())
+            ->performedOn($proposal)
+            ->withProperties([
+                'ip' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+            ])
+            ->log('Converteu proposta Nº ' . $proposal->number . ' em encomenda');
 
         return response()->json(['message' => 'Converted to order (stub).', 'proposal' => $proposal]);
     }
