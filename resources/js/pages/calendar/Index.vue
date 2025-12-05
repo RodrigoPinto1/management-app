@@ -87,7 +87,7 @@ async function loadMeta() {
         entities.value = list;
 
         try {
-            const uRes = await fetch('/users/list', {
+            const uRes = await fetch('/calendar/users', {
                 credentials: 'same-origin',
             });
             if (uRes.ok) users.value = (await uRes.json()).data || [];

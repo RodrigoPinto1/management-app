@@ -18,6 +18,13 @@ Route::get('dashboard', function () {
 require __DIR__ . '/settings.php';
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    // Users Access Control
+    Route::get('users', [\App\Http\Controllers\UserAccessController::class, 'index'])->name('users.index');
+    Route::get('users/list', [\App\Http\Controllers\UserAccessController::class, 'list']);
+    Route::post('users', [\App\Http\Controllers\UserAccessController::class, 'store'])->name('users.store');
+    Route::put('users/{user}', [\App\Http\Controllers\UserAccessController::class, 'update'])->name('users.update');
+    Route::delete('users/{user}', [\App\Http\Controllers\UserAccessController::class, 'destroy'])->name('users.destroy');
+
     Route::get('clients', function () {
         return Inertia::render('entities/Index', ['type' => 'client']);
     })->name('clients');
@@ -29,7 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // JSON endpoints used by the frontend
     Route::get('entities/list', [EntityController::class, 'list']);
     // Users list for calendar filter
-    Route::get('users/list', function () {
+    Route::get('calendar/users', function () {
         return response()->json(['data' => \App\Models\User::orderBy('name')->get()]);
     });
     Route::get('entities/check-nif', [EntityController::class, 'checkNif']);
@@ -64,4 +71,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('logs', [\App\Http\Controllers\ActivityLogController::class, 'index'])->name('logs.index');
     Route::get('logs/list', [\App\Http\Controllers\ActivityLogController::class, 'list']);
     Route::post('logs/generate-test', [\App\Http\Controllers\ActivityLogController::class, 'generateTest'])->name('logs.generate-test');
+
+    // Permissions
+    Route::get('permissions', [\App\Http\Controllers\PermissionController::class, 'index'])->name('permissions.index');
+    Route::get('permissions/list', [\App\Http\Controllers\PermissionController::class, 'list']);
+    Route::post('permissions', [\App\Http\Controllers\PermissionController::class, 'store'])->name('permissions.store');
+    Route::put('permissions/{role}', [\App\Http\Controllers\PermissionController::class, 'update'])->name('permissions.update');
+    Route::delete('permissions/{role}', [\App\Http\Controllers\PermissionController::class, 'destroy'])->name('permissions.destroy');
 });
